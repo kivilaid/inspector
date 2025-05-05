@@ -122,18 +122,18 @@ const ToolsTab = ({
   };
 
   return (
-    <TabsContent value="tools">
-      <div className="grid grid-cols-2 gap-4">
-        <ListPane
-          items={tools}
-          listItems={listTools}
-          clearItems={() => {
-            clearTools();
-            setSelectedTool(null);
-          }}
-          setSelectedItem={setSelectedTool}
-          renderItem={(tool) => (
-            <>
+    <TabsContent value="tools" className="h-full flex flex-col">
+      {/* Use flex layout for two panes */}
+      <div className="flex flex-1 gap-4 overflow-hidden">
+        {/* Left Pane: Tool List */}
+        <div className="w-1/3 flex flex-col border rounded-lg shadow overflow-hidden">
+          <ListPane
+            items={tools}
+            // listItems prop removed - button moved to right pane
+            // clearItems prop removed - button moved to right pane
+            setSelectedItem={setSelectedTool}
+            renderItem={(tool) => (
+              <>
               <span className="flex-1">{tool.name}</span>
               <span className="text-sm text-gray-500 text-right">
                 {tool.description}
@@ -141,20 +141,39 @@ const ToolsTab = ({
             </>
           )}
           title="Tools"
-          buttonText={nextCursor ? "List More Tools" : "List Tools"}
-          isButtonDisabled={!nextCursor && tools.length > 0}
-        />
+            buttonText={nextCursor ? "List More Tools" : "List Tools"} // Keep button text logic for ListPane internal use if needed, but button itself is moved
+            isButtonDisabled={!nextCursor && tools.length > 0} // Keep disabled logic if ListPane uses it internally
+          />
+        </div>
 
-        <div className="bg-card rounded-lg shadow">
-          <div className="p-4 border-b border-gray-200 dark:border-gray-800">
+        {/* Right Pane: Tool Details, Run, Results */}
+        <div className="flex-1 flex flex-col bg-card rounded-lg shadow overflow-hidden">
+          {/* Buttons moved to the top of the right pane */}
+          <div className="p-4 border-b border-gray-200 dark:border-gray-800 flex justify-between items-center">
             <h3 className="font-semibold">
               {selectedTool ? selectedTool.name : "Select a tool"}
             </h3>
+            <div className="flex gap-2">
+              <Button onClick={listTools} variant="outline" size="sm">
+                {nextCursor ? "List More Tools" : "List Tools"}
+              </Button>
+              <Button
+                onClick={() => {
+                  clearTools();
+                  setSelectedTool(null);
+                }}
+                variant="outline"
+                size="sm"
+              >
+                Clear
+              </Button>
+            </div>
           </div>
-          <div className="p-4">
+          {/* Scrollable content area for tool details/form/results */}
+          <div className="p-4 flex-1 overflow-y-auto">
             {selectedTool ? (
               <div className="space-y-4">
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-gray-600 dark:text-gray-400">
                   {selectedTool.description}
                 </p>
                 {Object.entries(selectedTool.inputSchema.properties ?? []).map(

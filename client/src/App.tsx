@@ -56,6 +56,7 @@ import { getMCPProxyAddress } from "./utils/configUtils";
 const CONFIG_LOCAL_STORAGE_KEY = "inspectorConfig_v1";
 
 const App = () => {
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false); // State for sidebar collapse
   const [resources, setResources] = useState<Resource[]>([]);
   const [resourceTemplates, setResourceTemplates] = useState<
     ResourceTemplate[]
@@ -482,9 +483,16 @@ const App = () => {
     );
   }
 
+  const toggleSidebar = () => {
+    setIsSidebarCollapsed(!isSidebarCollapsed);
+  };
+
   return (
     <div className="flex h-screen bg-background">
+      {/* TODO: Add conditional classes/styling based on isSidebarCollapsed */}
       <Sidebar
+        isCollapsed={isSidebarCollapsed} // Pass state down
+        toggleCollapse={toggleSidebar} // Pass toggle function down
         connectionStatus={connectionStatus}
         transportType={transportType}
         setTransportType={setTransportType}
