@@ -170,6 +170,7 @@ const ToolsTab = ({
           buttonText={nextCursor ? "List More Tools" : "List Tools"}
           isButtonDisabled={!nextCursor && tools.length > 0}
           showButtons={false}
+          compact={!showDescriptions}
         />
         </div>
 

@@ -10,6 +10,7 @@ type ListPaneProps<T> = {
   buttonText: string;
   isButtonDisabled?: boolean;
   showButtons?: boolean;
+  compact?: boolean;
 };
 
 const ListPane = <T extends object>({
@@ -22,6 +23,7 @@ const ListPane = <T extends object>({
   buttonText,
   isButtonDisabled,
   showButtons = true,
+  compact = false,
 }: ListPaneProps<T>) => (
   <div className="bg-card rounded-lg shadow">
     <div className="p-4 border-b border-gray-200 dark:border-gray-800">
@@ -48,11 +50,11 @@ const ListPane = <T extends object>({
           </Button>
         </>
       )}
-      <div className="space-y-2 overflow-y-auto max-h-96">
+      <div className={`${compact ? 'space-y-1' : 'space-y-2'} overflow-y-auto max-h-96`}>
         {items.map((item, index) => (
           <div
             key={index}
-            className="flex items-center p-2 rounded hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
+            className={`flex items-center ${compact ? 'p-1' : 'p-2'} rounded hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer`}
             onClick={() => setSelectedItem(item)}
           >
             {renderItem(item)}
