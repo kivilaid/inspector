@@ -244,7 +244,39 @@ const Sidebar = ({
 
       {/* Collapsed state - show minimal icons */}
       {isCollapsed && (
-        <div className="flex-1 flex flex-col items-center justify-center space-y-4 p-4">
+        <div className="flex-1 flex flex-col items-center space-y-4 p-4">
+          {/* Connection Status Indicator */}
+          <div className="flex flex-col items-center space-y-2">
+            <div
+              className={`w-3 h-3 rounded-full ${
+                (() => {
+                  switch (connectionStatus) {
+                    case "connected":
+                      return "bg-green-500";
+                    case "error":
+                    case "error-connecting-to-proxy":
+                      return "bg-red-500";
+                    default:
+                      return "bg-gray-500";
+                  }
+                })()
+              }`}
+              title={(() => {
+                switch (connectionStatus) {
+                  case "connected":
+                    return "Connected";
+                  case "error":
+                    return "Connection Error";
+                  case "error-connecting-to-proxy":
+                    return "Error Connecting to Proxy";
+                  default:
+                    return "Disconnected";
+                }
+              })()}
+            />
+          </div>
+          
+          {/* Connect Button */}
           <Button
             variant="ghost"
             size="sm"
