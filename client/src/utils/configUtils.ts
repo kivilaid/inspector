@@ -38,18 +38,18 @@ const getSearchParam = (key: string): string | null => {
 };
 
 export const getInitialTransportType = ():
-  | "stdio"
   | "sse"
-  | "streamable-http" => {
+  | "streamable-http"
+  | "stdio" => {
   const param = getSearchParam("transport");
-  if (param === "stdio" || param === "sse" || param === "streamable-http") {
+  if (param === "sse" || param === "streamable-http" || param === "stdio") {
     return param;
   }
   return (
     (localStorage.getItem("lastTransportType") as
-      | "stdio"
       | "sse"
-      | "streamable-http") || "stdio"
+      | "streamable-http"
+      | "stdio") || "sse"
   );
 };
 

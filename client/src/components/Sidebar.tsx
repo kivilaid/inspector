@@ -234,7 +234,7 @@ const Sidebar = ({
             </label>
             <Select
               value={transportType}
-              onValueChange={(value: "stdio" | "sse" | "streamable-http") =>
+              onValueChange={(value: "sse" | "streamable-http" | "stdio") =>
                 setTransportType(value)
               }
             >
@@ -242,9 +242,9 @@ const Sidebar = ({
                 <SelectValue placeholder="Select transport type" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="stdio">STDIO</SelectItem>
                 <SelectItem value="sse">SSE</SelectItem>
                 <SelectItem value="streamable-http">Streamable HTTP</SelectItem>
+                <SelectItem value="stdio">STDIO</SelectItem>
               </SelectContent>
             </Select>
           </div>

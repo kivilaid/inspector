@@ -88,7 +88,7 @@ const App = () => {
 
   const [sseUrl, setSseUrl] = useState<string>(getInitialSseUrl);
   const [transportType, setTransportType] = useState<
-    "stdio" | "sse" | "streamable-http"
+    "sse" | "streamable-http" | "stdio"
   >(getInitialTransportType);
   const [logLevel, setLogLevel] = useState<LoggingLevel>("debug");
   const [notifications, setNotifications] = useState<ServerNotification[]>([]);
