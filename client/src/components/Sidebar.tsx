@@ -14,6 +14,8 @@ import {
   RefreshCwOff,
   Copy,
   CheckCheck,
+  Sun,
+  Moon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -724,21 +726,21 @@ const Sidebar = ({
       </div>
       <div className="p-4 border-t">
         <div className="flex items-center justify-between">
-          <Select
-            value={theme}
-            onValueChange={(value: string) =>
-              setTheme(value as "system" | "light" | "dark")
-            }
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => {
+              const newTheme = theme === "dark" ? "light" : "dark";
+              setTheme(newTheme);
+            }}
+            title={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
           >
-            <SelectTrigger className="w-[100px]" id="theme-select">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="system">System</SelectItem>
-              <SelectItem value="light">Light</SelectItem>
-              <SelectItem value="dark">Dark</SelectItem>
-            </SelectContent>
-          </Select>
+            {theme === "dark" ? (
+              <Sun className="h-4 w-4" />
+            ) : (
+              <Moon className="h-4 w-4" />
+            )}
+          </Button>
 
           <div className="flex items-center space-x-2">
             <Button variant="ghost" title="Inspector Documentation" asChild>
