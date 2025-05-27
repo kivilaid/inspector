@@ -9,6 +9,13 @@ export const getMCPProxyAddress = (config: InspectorConfig): string => {
   if (proxyFullAddress) {
     return proxyFullAddress;
   }
+  
+  // If running on Vercel (or any production domain), use the current origin with /api prefix
+  if (window.location.hostname !== "localhost" && window.location.hostname !== "127.0.0.1") {
+    return `${window.location.origin}/api`;
+  }
+  
+  // For local development, use the traditional proxy port
   return `${window.location.protocol}//${window.location.hostname}:${DEFAULT_MCP_PROXY_LISTEN_PORT}`;
 };
 
