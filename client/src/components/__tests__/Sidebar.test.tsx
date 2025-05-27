@@ -64,6 +64,10 @@ describe("Sidebar Environment Variables", () => {
       tools: {},
     },
     pendingSampleRequests: 0,
+    // Tools actions
+    listTools: jest.fn(),
+    clearTools: jest.fn(),
+    hasTools: false,
   };
 
   const renderSidebar = (props = {}) => {

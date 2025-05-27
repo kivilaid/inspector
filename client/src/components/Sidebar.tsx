@@ -25,6 +25,7 @@ import {
   Hash,
   FolderTree,
   Key,
+  Trash2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -82,6 +83,10 @@ interface SidebarProps {
   onTabChange: (tab: string) => void;
   serverCapabilities?: ServerCapabilities | null;
   pendingSampleRequests: number;
+  // Tools actions
+  listTools?: () => void;
+  clearTools?: () => void;
+  hasTools?: boolean;
 }
 
 const Sidebar = ({
@@ -113,6 +118,9 @@ const Sidebar = ({
   onTabChange,
   serverCapabilities,
   pendingSampleRequests,
+  listTools,
+  clearTools,
+  hasTools,
 }: SidebarProps) => {
   const [theme, setTheme] = useTheme();
   const [showEnvVars, setShowEnvVars] = useState(false);
@@ -608,15 +616,45 @@ const Sidebar = ({
             </Button>
             {showNavigation && (
               <div className="space-y-1">
-                <Button
-                  variant={activeTab === "tools" ? "default" : "ghost"}
-                  className="w-full justify-start"
-                  onClick={() => onTabChange("tools")}
-                  disabled={!serverCapabilities?.tools}
-                >
-                  <Hammer className="w-4 h-4 mr-2" />
-                  Tools
-                </Button>
+                <div className="flex items-center w-full">
+                  <Button
+                    variant={activeTab === "tools" ? "default" : "ghost"}
+                    className="flex-1 justify-start"
+                    onClick={() => onTabChange("tools")}
+                    disabled={!serverCapabilities?.tools}
+                  >
+                    <Hammer className="w-4 h-4 mr-2" />
+                    Tools
+                  </Button>
+                  {serverCapabilities?.tools && hasTools && (
+                    <div className="flex items-center ml-2 space-x-1">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 w-8 p-0"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          listTools?.();
+                        }}
+                        title="List Tools"
+                      >
+                        <RotateCcw className="h-3 w-3" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 w-8 p-0"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          clearTools?.();
+                        }}
+                        title="Clear Tools"
+                      >
+                        <Trash2 className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  )}
+                </div>
                 <Button
                   variant={activeTab === "resources" ? "default" : "ghost"}
                   className="w-full justify-start"
