@@ -18,6 +18,13 @@ import {
   Moon,
   Menu,
   X,
+  Files,
+  MessageSquare,
+  Hammer,
+  Bell,
+  Hash,
+  FolderTree,
+  Key,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -32,6 +39,7 @@ import { StdErrNotification } from "@/lib/notificationTypes";
 import {
   LoggingLevel,
   LoggingLevelSchema,
+  ServerCapabilities,
 } from "@modelcontextprotocol/sdk/types.js";
 import { InspectorConfig } from "@/lib/configurationTypes";
 import { ConnectionStatus } from "@/lib/constants";
@@ -69,6 +77,11 @@ interface SidebarProps {
   loggingSupported: boolean;
   config: InspectorConfig;
   setConfig: (config: InspectorConfig) => void;
+  // Navigation props
+  activeTab: string;
+  onTabChange: (tab: string) => void;
+  serverCapabilities?: ServerCapabilities | null;
+  pendingSampleRequests: number;
 }
 
 const Sidebar = ({
@@ -96,6 +109,10 @@ const Sidebar = ({
   loggingSupported,
   config,
   setConfig,
+  activeTab,
+  onTabChange,
+  serverCapabilities,
+  pendingSampleRequests,
 }: SidebarProps) => {
   const [theme, setTheme] = useTheme();
   const [showEnvVars, setShowEnvVars] = useState(false);
@@ -105,6 +122,7 @@ const Sidebar = ({
   const [copiedServerEntry, setCopiedServerEntry] = useState(false);
   const [copiedServerFile, setCopiedServerFile] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [showNavigation, setShowNavigation] = useState(true);
   const { toast } = useToast();
 
   // Reusable error reporter for copy actions
@@ -571,6 +589,91 @@ const Sidebar = ({
               </TooltipTrigger>
               <TooltipContent>Copy Servers File</TooltipContent>
             </Tooltip>
+          </div>
+
+          {/* Navigation */}
+          <div className="space-y-2">
+            <Button
+              variant="outline"
+              onClick={() => setShowNavigation(!showNavigation)}
+              className="flex items-center w-full"
+              aria-expanded={showNavigation}
+            >
+              {showNavigation ? (
+                <ChevronDown className="w-4 h-4 mr-2" />
+              ) : (
+                <ChevronRight className="w-4 h-4 mr-2" />
+              )}
+              Navigation
+            </Button>
+            {showNavigation && (
+              <div className="space-y-1">
+                <Button
+                  variant={activeTab === "resources" ? "default" : "ghost"}
+                  className="w-full justify-start"
+                  onClick={() => onTabChange("resources")}
+                  disabled={!serverCapabilities?.resources}
+                >
+                  <Files className="w-4 h-4 mr-2" />
+                  Resources
+                </Button>
+                <Button
+                  variant={activeTab === "prompts" ? "default" : "ghost"}
+                  className="w-full justify-start"
+                  onClick={() => onTabChange("prompts")}
+                  disabled={!serverCapabilities?.prompts}
+                >
+                  <MessageSquare className="w-4 h-4 mr-2" />
+                  Prompts
+                </Button>
+                <Button
+                  variant={activeTab === "tools" ? "default" : "ghost"}
+                  className="w-full justify-start"
+                  onClick={() => onTabChange("tools")}
+                  disabled={!serverCapabilities?.tools}
+                >
+                  <Hammer className="w-4 h-4 mr-2" />
+                  Tools
+                </Button>
+                <Button
+                  variant={activeTab === "ping" ? "default" : "ghost"}
+                  className="w-full justify-start"
+                  onClick={() => onTabChange("ping")}
+                >
+                  <Bell className="w-4 h-4 mr-2" />
+                  Ping
+                </Button>
+                <Button
+                  variant={activeTab === "sampling" ? "default" : "ghost"}
+                  className="w-full justify-start relative"
+                  onClick={() => onTabChange("sampling")}
+                >
+                  <Hash className="w-4 h-4 mr-2" />
+                  Sampling
+                  {pendingSampleRequests > 0 && (
+                    <span className="ml-auto bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
+                      {pendingSampleRequests}
+                    </span>
+                  )}
+                </Button>
+                <Button
+                  variant={activeTab === "roots" ? "default" : "ghost"}
+                  className="w-full justify-start"
+                  onClick={() => onTabChange("roots")}
+                >
+                  <FolderTree className="w-4 h-4 mr-2" />
+                  Roots
+                </Button>
+                <Button
+                  variant={activeTab === "auth" ? "default" : "ghost"}
+                  className="w-full justify-start"
+                  onClick={() => onTabChange("auth")}
+                >
+                  <Key className="w-4 h-4 mr-2" />
+                  Auth
+                </Button>
+              </div>
+            )}
           </div>
 
           {/* Configuration */}

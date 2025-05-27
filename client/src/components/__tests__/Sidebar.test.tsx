@@ -55,6 +55,15 @@ describe("Sidebar Environment Variables", () => {
     loggingSupported: true,
     config: DEFAULT_INSPECTOR_CONFIG,
     setConfig: jest.fn(),
+    // Navigation props
+    activeTab: "resources",
+    onTabChange: jest.fn(),
+    serverCapabilities: {
+      resources: {},
+      prompts: {},
+      tools: {},
+    },
+    pendingSampleRequests: 0,
   };
 
   const renderSidebar = (props = {}) => {
