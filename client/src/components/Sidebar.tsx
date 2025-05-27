@@ -626,7 +626,7 @@ const Sidebar = ({
                     <Hammer className="w-4 h-4 mr-2" />
                     Tools
                   </Button>
-                  {serverCapabilities?.tools && hasTools && (
+                  {serverCapabilities?.tools && (
                     <div className="flex items-center ml-2 space-x-1">
                       <Button
                         variant="ghost"
@@ -648,6 +648,7 @@ const Sidebar = ({
                           e.stopPropagation();
                           clearTools?.();
                         }}
+                        disabled={!hasTools}
                         title="Clear Tools"
                       >
                         <Trash2 className="h-3 w-3" />
