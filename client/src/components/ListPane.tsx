@@ -9,6 +9,7 @@ type ListPaneProps<T> = {
   title: string;
   buttonText: string;
   isButtonDisabled?: boolean;
+  showButtons?: boolean;
 };
 
 const ListPane = <T extends object>({
@@ -20,28 +21,33 @@ const ListPane = <T extends object>({
   title,
   buttonText,
   isButtonDisabled,
+  showButtons = true,
 }: ListPaneProps<T>) => (
   <div className="bg-card rounded-lg shadow">
     <div className="p-4 border-b border-gray-200 dark:border-gray-800">
       <h3 className="font-semibold dark:text-white">{title}</h3>
     </div>
     <div className="p-4">
-      <Button
-        variant="outline"
-        className="w-full mb-4"
-        onClick={listItems}
-        disabled={isButtonDisabled}
-      >
-        {buttonText}
-      </Button>
-      <Button
-        variant="outline"
-        className="w-full mb-4"
-        onClick={clearItems}
-        disabled={items.length === 0}
-      >
-        Clear
-      </Button>
+      {showButtons && (
+        <>
+          <Button
+            variant="outline"
+            className="w-full mb-4"
+            onClick={listItems}
+            disabled={isButtonDisabled}
+          >
+            {buttonText}
+          </Button>
+          <Button
+            variant="outline"
+            className="w-full mb-4"
+            onClick={clearItems}
+            disabled={items.length === 0}
+          >
+            Clear
+          </Button>
+        </>
+      )}
       <div className="space-y-2 overflow-y-auto max-h-96">
         {items.map((item, index) => (
           <div

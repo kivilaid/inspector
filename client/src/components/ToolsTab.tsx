@@ -143,6 +143,7 @@ const ToolsTab = ({
           title="Tools"
           buttonText={nextCursor ? "List More Tools" : "List Tools"}
           isButtonDisabled={!nextCursor && tools.length > 0}
+          showButtons={false}
         />
 
         <div className="bg-card rounded-lg shadow">
