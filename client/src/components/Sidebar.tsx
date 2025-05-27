@@ -16,6 +16,8 @@ import {
   CheckCheck,
   Sun,
   Moon,
+  Menu,
+  X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -102,6 +104,7 @@ const Sidebar = ({
   const [shownEnvVars, setShownEnvVars] = useState<Set<string>>(new Set());
   const [copiedServerEntry, setCopiedServerEntry] = useState(false);
   const [copiedServerFile, setCopiedServerFile] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const { toast } = useToast();
 
   // Reusable error reporter for copy actions
@@ -216,18 +219,48 @@ const Sidebar = ({
   }, [generateMCPServerFile, toast, reportError]);
 
   return (
-    <div className="w-80 bg-card border-r border-border flex flex-col h-full">
+    <div className={`${isCollapsed ? 'w-16' : 'w-80'} bg-card border-r border-border flex flex-col h-full transition-all duration-300 ease-in-out`}>
       <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-800">
         <div className="flex items-center">
-          <h1 className="ml-2 text-lg font-semibold">
-            MCP Inspector v{version}
-          </h1>
+          {!isCollapsed && (
+            <h1 className="ml-2 text-lg font-semibold">
+              MCP Inspector v{version}
+            </h1>
+          )}
         </div>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setIsCollapsed(!isCollapsed)}
+          title={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+        >
+          {isCollapsed ? (
+            <Menu className="h-4 w-4" />
+          ) : (
+            <X className="h-4 w-4" />
+          )}
+        </Button>
       </div>
 
-      <div className="p-4 flex-1 overflow-auto">
+      {/* Collapsed state - show minimal icons */}
+      {isCollapsed && (
+        <div className="flex-1 flex flex-col items-center justify-center space-y-4 p-4">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onConnect}
+            disabled={connectionStatus === "connected"}
+            title="Connect to MCP Server"
+          >
+            <Play className="h-4 w-4" />
+          </Button>
+        </div>
+      )}
+
+      {/* Full content */}
+      <div className={`p-4 flex-1 overflow-auto ${isCollapsed ? 'hidden' : ''}`}>
         <div className="space-y-4">
-          <div className="space-y-2">
+            <div className="space-y-2">
             <label
               className="text-sm font-medium"
               htmlFor="transport-type-select"
@@ -724,8 +757,10 @@ const Sidebar = ({
           </div>
         </div>
       </div>
+
+      {/* Footer - always visible */}
       <div className="p-4 border-t">
-        <div className="flex items-center justify-between">
+        <div className={isCollapsed ? 'flex items-center justify-center' : 'flex items-center justify-between'}>
           <Button
             variant="ghost"
             size="sm"
@@ -742,7 +777,8 @@ const Sidebar = ({
             )}
           </Button>
 
-          <div className="flex items-center space-x-2">
+          {!isCollapsed && (
+            <div className="flex items-center space-x-2">
             <Button variant="ghost" title="Inspector Documentation" asChild>
               <a
                 href="https://modelcontextprotocol.io/docs/tools/inspector"
@@ -774,7 +810,8 @@ const Sidebar = ({
                 <Github className="w-4 h-4 text-foreground" />
               </a>
             </Button>
-          </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
