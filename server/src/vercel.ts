@@ -128,7 +128,7 @@ const createTransport = async (req: express.Request): Promise<Transport> => {
 
 let backingServerTransport: Transport | undefined;
 
-app.get("/mcp", async (req, res) => {
+app.get("/api/mcp", async (req, res) => {
   const sessionId = req.headers["mcp-session-id"] as string;
   console.log(`Received GET message for sessionId ${sessionId}`);
   try {
@@ -147,7 +147,7 @@ app.get("/mcp", async (req, res) => {
   }
 });
 
-app.post("/mcp", async (req, res) => {
+app.post("/api/mcp", async (req, res) => {
   const sessionId = req.headers["mcp-session-id"] as string | undefined;
   console.log(`Received POST message for sessionId ${sessionId}`);
   if (!sessionId) {
@@ -215,7 +215,7 @@ app.post("/mcp", async (req, res) => {
   }
 });
 
-app.get("/stdio", async (req, res) => {
+app.get("/api/stdio", async (req, res) => {
   try {
     console.log("New connection");
 
@@ -237,7 +237,7 @@ app.get("/stdio", async (req, res) => {
 
     console.log("Connected MCP client to backing server transport");
 
-    const webAppTransport = new SSEServerTransport("/message", res);
+    const webAppTransport = new SSEServerTransport("/api/message", res);
     webAppTransports.set(webAppTransport.sessionId, webAppTransport);
 
     console.log("Created web app transport");
@@ -268,7 +268,7 @@ app.get("/stdio", async (req, res) => {
   }
 });
 
-app.get("/sse", async (req, res) => {
+app.get("/api/sse", async (req, res) => {
   try {
     console.log(
       "New SSE connection. NOTE: The sse transport is deprecated and has been replaced by streamable-http",
@@ -292,7 +292,7 @@ app.get("/sse", async (req, res) => {
 
     console.log("Connected MCP client to backing server transport");
 
-    const webAppTransport = new SSEServerTransport("/message", res);
+    const webAppTransport = new SSEServerTransport("/api/message", res);
     webAppTransports.set(webAppTransport.sessionId, webAppTransport);
     console.log("Created web app transport");
 
@@ -310,7 +310,7 @@ app.get("/sse", async (req, res) => {
   }
 });
 
-app.post("/message", async (req, res) => {
+app.post("/api/message", async (req, res) => {
   try {
     const sessionId = req.query.sessionId;
     console.log(`Received message for sessionId ${sessionId}`);
@@ -329,13 +329,13 @@ app.post("/message", async (req, res) => {
   }
 });
 
-app.get("/health", (req, res) => {
+app.get("/api/health", (req, res) => {
   res.json({
     status: "ok",
   });
 });
 
-app.get("/config", (req, res) => {
+app.get("/api/config", (req, res) => {
   try {
     res.json({
       defaultEnvironment,
