@@ -156,7 +156,7 @@ const App = () => {
   // Active tab state
   const [activeTab, setActiveTab] = useState<string>(() => {
     const hash = window.location.hash.slice(1);
-    return hash || "resources";
+    return hash || "tools";
   });
   
   const handleTabChange = (tab: string) => {
