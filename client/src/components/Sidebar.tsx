@@ -609,6 +609,15 @@ const Sidebar = ({
             {showNavigation && (
               <div className="space-y-1">
                 <Button
+                  variant={activeTab === "tools" ? "default" : "ghost"}
+                  className="w-full justify-start"
+                  onClick={() => onTabChange("tools")}
+                  disabled={!serverCapabilities?.tools}
+                >
+                  <Hammer className="w-4 h-4 mr-2" />
+                  Tools
+                </Button>
+                <Button
                   variant={activeTab === "resources" ? "default" : "ghost"}
                   className="w-full justify-start"
                   onClick={() => onTabChange("resources")}
@@ -625,15 +634,6 @@ const Sidebar = ({
                 >
                   <MessageSquare className="w-4 h-4 mr-2" />
                   Prompts
-                </Button>
-                <Button
-                  variant={activeTab === "tools" ? "default" : "ghost"}
-                  className="w-full justify-start"
-                  onClick={() => onTabChange("tools")}
-                  disabled={!serverCapabilities?.tools}
-                >
-                  <Hammer className="w-4 h-4 mr-2" />
-                  Tools
                 </Button>
                 <Button
                   variant={activeTab === "ping" ? "default" : "ghost"}
