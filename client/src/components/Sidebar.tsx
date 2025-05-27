@@ -122,7 +122,7 @@ const Sidebar = ({
   const [copiedServerEntry, setCopiedServerEntry] = useState(false);
   const [copiedServerFile, setCopiedServerFile] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [showNavigation, setShowNavigation] = useState(true);
+  const [showNavigation, setShowNavigation] = useState(false);
   const { toast } = useToast();
 
   // Reusable error reporter for copy actions
