@@ -1,0 +1,48 @@
+# Dependencies
+node_modules/
+*/node_modules/
+
+# Build outputs (except client/dist)
+server/build/
+cli/build/
+
+# Development files
+*.test.js
+*.test.ts
+*.test.tsx
+**/__tests__/
+**/__mocks__/
+
+# Environment files
+.env*
+
+# Git
+.git/
+.gitignore
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage
+coverage/
+*.lcov
+
+# Cache
+.npm
+.eslintcache
+*.tsbuildinfo
+
+# OS
+.DS_Store
+Thumbs.db
