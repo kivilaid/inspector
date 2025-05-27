@@ -1,29 +1,15 @@
 {
-  "builds": [
-    {
-      "src": "client/package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "dist"
-      }
-    },
-    {
-      "src": "server/build/vercel.js",
-      "use": "@vercel/node"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "/server/build/vercel.js"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/client/$1"
-    }
-  ],
-  "installCommand": "npm install && cd client && npm install && cd ../server && npm install && npx tsc src/vercel.ts --outDir build --target ES2022 --module Node16 --moduleResolution Node16 --esModuleInterop --skipLibCheck",
+  "buildCommand": "cd client && npm run build",
+  "outputDirectory": "client/dist",
+  "installCommand": "npm install && cd client && npm install",
+  "framework": null,
   "env": {
     "NODE_VERSION": "22"
-  }
+  },
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
 }
