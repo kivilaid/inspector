@@ -14,7 +14,7 @@ import {
   ListToolsResult,
   Tool,
 } from "@modelcontextprotocol/sdk/types.js";
-import { Loader2, Send } from "lucide-react";
+import { Loader2, Send, Eye, EyeOff } from "lucide-react";
 import { useEffect, useState } from "react";
 import ListPane from "./ListPane";
 import JsonView from "./JsonView";
@@ -41,6 +41,7 @@ const ToolsTab = ({
 }) => {
   const [params, setParams] = useState<Record<string, unknown>>({});
   const [isToolRunning, setIsToolRunning] = useState(false);
+  const [showDescriptions, setShowDescriptions] = useState(false);
 
   useEffect(() => {
     const params = Object.entries(
@@ -124,7 +125,30 @@ const ToolsTab = ({
   return (
     <TabsContent value="tools">
       <div className="grid grid-cols-2 gap-4">
-        <ListPane
+        <div className="space-y-4">
+          {/* Toggle for descriptions */}
+          <div className="flex items-center justify-between">
+            <h3 className="font-semibold">Tools</h3>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowDescriptions(!showDescriptions)}
+              className="flex items-center gap-2"
+            >
+              {showDescriptions ? (
+                <>
+                  <EyeOff className="h-4 w-4" />
+                  Hide Descriptions
+                </>
+              ) : (
+                <>
+                  <Eye className="h-4 w-4" />
+                  Show Descriptions
+                </>
+              )}
+            </Button>
+          </div>
+          <ListPane
           items={tools}
           listItems={listTools}
           clearItems={() => {
@@ -135,16 +159,19 @@ const ToolsTab = ({
           renderItem={(tool) => (
             <div className="flex flex-col items-start">
               <span className="flex-1">{tool.name}</span>
-              <span className="text-sm text-gray-500 text-left">
-                {tool.description}
-              </span>
+              {showDescriptions && (
+                <span className="text-sm text-gray-500 text-left">
+                  {tool.description}
+                </span>
+              )}
             </div>
           )}
-          title="Tools"
+          title=""
           buttonText={nextCursor ? "List More Tools" : "List Tools"}
           isButtonDisabled={!nextCursor && tools.length > 0}
           showButtons={false}
         />
+        </div>
 
         <div className="bg-card rounded-lg shadow">
           <div className="p-4 border-b border-gray-200 dark:border-gray-800">
