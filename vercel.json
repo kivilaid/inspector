@@ -8,21 +8,21 @@
       }
     },
     {
-      "src": "api/index.js",
+      "src": "server/build/vercel.js",
       "use": "@vercel/node"
     }
   ],
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "/api/index.js"
+      "dest": "/server/build/vercel.js"
     },
     {
       "src": "/(.*)",
       "dest": "/client/$1"
     }
   ],
-  "installCommand": "npm install && cd client && npm install && cd server && npm install",
+  "installCommand": "npm install && cd client && npm install && cd ../server && npm install && npx tsc src/vercel.ts --outDir build --target ES2022 --module Node16 --moduleResolution Node16 --esModuleInterop --skipLibCheck",
   "env": {
     "NODE_VERSION": "22"
   }

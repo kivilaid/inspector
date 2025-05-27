@@ -1,23 +1,22 @@
-const cors = require("cors");
-const { parse: shellParseArgs } = require("shell-quote");
+import cors from "cors";
+import { parse as shellParseArgs } from "shell-quote";
 
-const {
+import {
   SSEClientTransport,
   SseError,
-} = require("@modelcontextprotocol/sdk/client/sse");
-const {
+} from "@modelcontextprotocol/sdk/client/sse.js";
+import {
   StdioClientTransport,
   getDefaultEnvironment,
-} = require("@modelcontextprotocol/sdk/client/stdio");
-const { StreamableHTTPClientTransport } = require("@modelcontextprotocol/sdk/client/streamableHttp");
-const { StreamableHTTPServerTransport } = require("@modelcontextprotocol/sdk/server/streamableHttp");
-const { SSEServerTransport } = require("@modelcontextprotocol/sdk/server/sse");
-const express = require("express");
-const { findActualExecutable } = require("spawn-rx");
-const { randomUUID } = require("node:crypto");
-
-// Import the MCP proxy
-const mcpProxy = require("./mcpProxy");
+} from "@modelcontextprotocol/sdk/client/stdio.js";
+import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
+import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
+import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
+import { Transport } from "@modelcontextprotocol/sdk/shared/transport.js";
+import express from "express";
+import { findActualExecutable } from "spawn-rx";
+import mcpProxy from "./mcpProxy.js";
+import { randomUUID } from "node:crypto";
 
 const SSE_HEADERS_PASSTHROUGH = ["authorization"];
 const STREAMABLE_HTTP_HEADERS_PASSTHROUGH = [
@@ -38,19 +37,18 @@ app.use((req, res, next) => {
   next();
 });
 
-const webAppTransports = new Map(); // Transports by sessionId
-let backingServerTransport;
+const webAppTransports: Map<string, Transport> = new Map<string, Transport>(); // Transports by sessionId
 
-const createTransport = async (req) => {
+const createTransport = async (req: express.Request): Promise<Transport> => {
   const query = req.query;
   console.log("Query parameters:", query);
 
-  const transportType = query.transportType;
+  const transportType = query.transportType as string;
 
   if (transportType === "stdio") {
-    const command = query.command;
-    const origArgs = shellParseArgs(query.args);
-    const queryEnv = query.env ? JSON.parse(query.env) : {};
+    const command = query.command as string;
+    const origArgs = shellParseArgs(query.args as string) as string[];
+    const queryEnv = query.env ? JSON.parse(query.env as string) : {};
     const env = { ...process.env, ...defaultEnvironment, ...queryEnv };
 
     const { cmd, args } = findActualExecutable(command, origArgs);
@@ -69,8 +67,8 @@ const createTransport = async (req) => {
     console.log("Spawned stdio transport");
     return transport;
   } else if (transportType === "sse") {
-    const url = query.url;
-    const headers = {
+    const url = query.url as string;
+    const headers: HeadersInit = {
       Accept: "text/event-stream",
     };
 
@@ -98,7 +96,7 @@ const createTransport = async (req) => {
     console.log("Connected to SSE transport");
     return transport;
   } else if (transportType === "streamable-http") {
-    const headers = {
+    const headers: HeadersInit = {
       Accept: "text/event-stream, application/json",
     };
 
@@ -112,7 +110,7 @@ const createTransport = async (req) => {
     }
 
     const transport = new StreamableHTTPClientTransport(
-      new URL(query.url),
+      new URL(query.url as string),
       {
         requestInit: {
           headers,
@@ -128,12 +126,15 @@ const createTransport = async (req) => {
   }
 };
 
-// MCP endpoint
+let backingServerTransport: Transport | undefined;
+
 app.get("/mcp", async (req, res) => {
-  const sessionId = req.headers["mcp-session-id"];
+  const sessionId = req.headers["mcp-session-id"] as string;
   console.log(`Received GET message for sessionId ${sessionId}`);
   try {
-    const transport = webAppTransports.get(sessionId);
+    const transport = webAppTransports.get(
+      sessionId,
+    ) as StreamableHTTPServerTransport;
     if (!transport) {
       res.status(404).end("Session not found");
       return;
@@ -147,7 +148,7 @@ app.get("/mcp", async (req, res) => {
 });
 
 app.post("/mcp", async (req, res) => {
-  const sessionId = req.headers["mcp-session-id"];
+  const sessionId = req.headers["mcp-session-id"] as string | undefined;
   console.log(`Received POST message for sessionId ${sessionId}`);
   if (!sessionId) {
     try {
@@ -185,7 +186,7 @@ app.post("/mcp", async (req, res) => {
         transportToServer: backingServerTransport,
       });
 
-      await webAppTransport.handleRequest(
+      await (webAppTransport as StreamableHTTPServerTransport).handleRequest(
         req,
         res,
         req.body,
@@ -196,11 +197,13 @@ app.post("/mcp", async (req, res) => {
     }
   } else {
     try {
-      const transport = webAppTransports.get(sessionId);
+      const transport = webAppTransports.get(
+        sessionId,
+      ) as StreamableHTTPServerTransport;
       if (!transport) {
         res.status(404).end("Transport not found for sessionId " + sessionId);
       } else {
-        await transport.handleRequest(
+        await (transport as StreamableHTTPServerTransport).handleRequest(
           req,
           res,
         );
@@ -212,7 +215,6 @@ app.post("/mcp", async (req, res) => {
   }
 });
 
-// Stdio endpoint
 app.get("/stdio", async (req, res) => {
   try {
     console.log("New connection");
@@ -241,7 +243,7 @@ app.get("/stdio", async (req, res) => {
     console.log("Created web app transport");
 
     await webAppTransport.start();
-    backingServerTransport.stderr.on(
+    (backingServerTransport as StdioClientTransport).stderr!.on(
       "data",
       (chunk) => {
         webAppTransport.send({
@@ -266,7 +268,6 @@ app.get("/stdio", async (req, res) => {
   }
 });
 
-// SSE endpoint
 app.get("/sse", async (req, res) => {
   try {
     console.log(
@@ -309,13 +310,14 @@ app.get("/sse", async (req, res) => {
   }
 });
 
-// Message endpoint
 app.post("/message", async (req, res) => {
   try {
     const sessionId = req.query.sessionId;
     console.log(`Received message for sessionId ${sessionId}`);
 
-    const transport = webAppTransports.get(sessionId);
+    const transport = webAppTransports.get(
+      sessionId as string,
+    ) as SSEServerTransport;
     if (!transport) {
       res.status(404).end("Session not found");
       return;
@@ -327,15 +329,13 @@ app.post("/message", async (req, res) => {
   }
 });
 
-// Health check
-app.get("/health", (_req, res) => {
+app.get("/health", (req, res) => {
   res.json({
     status: "ok",
   });
 });
 
-// Config endpoint
-app.get("/config", (_req, res) => {
+app.get("/config", (req, res) => {
   try {
     res.json({
       defaultEnvironment,
@@ -348,4 +348,5 @@ app.get("/config", (_req, res) => {
   }
 });
 
-module.exports = app;
+// Export for Vercel
+export default app;
